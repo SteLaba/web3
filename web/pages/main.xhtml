@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head>
+    <title>Main page</title>
+    <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/images/main-fav.ico"/>
+    <h:outputStylesheet name="css/mainpage-styles.css"/>
+    <h:outputScript name="js/mainpage-scripts.js"/>
+</h:head>
+
+<h:body>
+    <div id="home-button-bar">
+        <p:button value="На стартовую страницу" outcome="toStartPage"
+                  styleClass="ui-button-raised ui-button-secondary"/>
+    </div>
+
+    <div id="container">
+        <div id="leftbar">
+            <div class="dec-bar">
+            </div>
+            <table class="dec-table">
+                <tr/>
+            </table>
+
+            <div id="left-container">
+                <h:form id="main-form">
+                    <div id="input-bar">
+
+                        <div id="x-values-bar">
+                            <h:outputLabel class="x-label">Значение X</h:outputLabel>
+                            <h:panelGrid columns="1">
+                                <p:inputText id="x-value" value="#{hitsData.x}" size="14" readonly="#{facesContext.renderResponse}"/>
+                                <p:slider for="x-value" minValue="-3" maxValue="3" step="0.5" range="max"/>
+                            </h:panelGrid>
+                        </div>
+
+                        <div id="y-values-bar">
+                            <h:outputLabel class="y-label">Значение Y</h:outputLabel>
+                            <h:panelGrid columns="1">
+                                <p:inputText id="y-value" value="#{hitsData.y}" size="14" required="true" maxlength="10">
+                                    <f:validator validatorId="yValidator"/>
+                                </p:inputText>
+                            </h:panelGrid>
+                        </div>
+
+                        <div id="r-values-bar">
+                            <h:outputLabel class="r-label">Значение R</h:outputLabel>
+                            <h:panelGrid columns="6">
+                                <h:commandLink value="#{hitsData.r1val}" class="r-buttons" name="r-buttons" id="#{hitsData.r1}" actionListener="#{hitsData.rToggle}" converter="javax.faces.Double"/>
+
+                                <h:commandLink value="#{hitsData.r2val}" class="r-buttons" name="r-buttons" id="#{hitsData.r2}" actionListener="#{hitsData.rToggle}" converter="javax.faces.Double"/>
+
+                                <h:commandLink value="#{hitsData.r3val}" class="r-buttons" name="r-buttons" id="#{hitsData.r3}" actionListener="#{hitsData.rToggle}" converter="javax.faces.Double"/>
+
+                                <h:commandLink value="#{hitsData.r4val}" class="r-buttons" name="r-buttons" id="#{hitsData.r4}" actionListener="#{hitsData.rToggle}" converter="javax.faces.Double"/>
+
+                                <h:commandLink value="#{hitsData.r5val}" class="r-buttons" name="r-buttons" id="#{hitsData.r5}" actionListener="#{hitsData.rToggle}" converter="javax.faces.Double"/>
+                            </h:panelGrid>
+                        </div>
+
+                        <div id="button-bar">
+                            <p:commandButton type="submit" id="submit-button" value="submit" action="#{hitsData.addHit()}"
+                                             styleClass="ui-button-outlined ui-button-secondary" update="msg-for-y">
+                                <p:ajax update="result-table"/>
+                            </p:commandButton>
+
+                            <p:commandButton ajax="false" id="clear-button" value="clear" action="#{hitsData.clear()}"
+                                             styleClass="ui-button-outlined ui-button-secondary">
+                            </p:commandButton>
+                        </div>
+                        <div id="message-container">
+                            <h:message id="msg-for-y" for="y-value"/>
+                        </div>
+                    </div>
+                </h:form>
+
+                <h:form id="svg-points-form" action="">
+                    <div id="graph">
+                        <div class="interactive-element">
+                            <ui:include src="graph/svg-marking.html"/>
+                        </div>
+                    </div>
+                    <h:inputText id="svg-x-value" value="#{hitsData.svgX}" style="display: none"/>
+                    <h:inputText id="svg-y-value" value="#{hitsData.svgY}" style="display: none"/>
+                    <h:inputText id="svg-r-value" value="#{hitsData.svgR}" style="display: none"/>
+                    <p:commandButton type="submit" id="hidden-button" action="#{hitsData.svgAddHit()}" style="display: none">
+                        <p:ajax update="result-table"/>
+                    </p:commandButton>
+                </h:form>
+            </div>
+        </div>
+
+        <div id="spacer"></div>
+
+        <div id="rightbar">
+            <div class="dec-bar"></div>
+
+            <div class="outer-scroll-container">
+                <div class="inner-scroll-container">
+                    <h:dataTable id="result-table" value="#{hitsData.hitsList}" var="hits">
+                        <h:column>
+                            <f:facet name="header">X</f:facet>
+                            <h:outputText value="#{hits.x}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Y</f:facet>
+                            <h:outputText value="#{hits.y}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">R</f:facet>
+                            <h:outputText value="#{hits.r}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Текущее время</f:facet>
+                            <h:outputText value="#{hits.curTime}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Время исполнения (мс)</f:facet>
+                            <h:outputText value="#{hits.execTime}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Результат</f:facet>
+                            <h:outputText value="#{hits.result}"/>
+                        </h:column>
+                    </h:dataTable>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</h:body>
+
+</html>

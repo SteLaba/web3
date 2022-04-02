@@ -1,0 +1,7 @@
+createDDL_ddlGeneration.jdbc
+dropDDL_ddlGeneration.jdbc
+Lab3.iml
+lib
+target
+.idea
+.gradle
